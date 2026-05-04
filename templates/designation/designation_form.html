@@ -1,0 +1,7 @@
+<h1>{% if designation %}Edit Designation{% else %}Add Designation{% endif %}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+<a href="{% url 'designation_list' %}">Back to Designation List</a>

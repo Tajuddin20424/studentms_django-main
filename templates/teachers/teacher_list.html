@@ -1,0 +1,125 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teachers{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">+ Add Teacher</button>
+    <h2 class="text-center mb-4">Teachers Table</h2>
+
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Created At</th><th>Updated At</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="teacherTable">
+            {% for t in teachers %}
+            <tr id="row{{ t.id }}">
+                <td>{{ t.id }}</td>
+                <td>{{ t.name }}</td>
+                <td>{{ t.email }}</td>
+                <td>{{ t.phone }}</td>
+                <td>{{ t.created_at }}</td>
+                <td>{{ t.updated_at }}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning editBtn"
+                        data-id="{{ t.id }}"
+                        data-name="{{ t.name }}"
+                        data-email="{{ t.email }}"
+                        data-phone="{{ t.phone }}">
+                        Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger deleteBtn" data-id="{{ t.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- ADD TEACHER MODAL -->
+<div class="modal fade" id="addModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content p-4" style="border-radius: 10px;">
+      <div class="modal-header border-0">
+        <h2 class="modal-title w-100 text-center fw-bold">Add New Teacher</h2>
+      </div>
+      <div class="modal-body">
+        <form id="addForm">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Full Name</label>
+            <input type="text" name="name" class="form-control" placeholder="Enter full name">
+            <span class="text-danger small name_error"></span>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="Enter email">
+            <span class="text-danger small email_error"></span>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Phone</label>
+            <input type="text" name="phone" class="form-control" placeholder="Enter phone number">
+            <span class="text-danger small phone_error"></span>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mt-3">Add Teacher</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TEACHER MODAL -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content p-4" style="border-radius: 10px;">
+      <div class="modal-header border-0">
+        <h2 class="modal-title w-100 text-center fw-bold">Edit Teacher</h2>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          {% csrf_token %}
+          <input type="hidden" name="id" id="edit_id">
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Full Name</label>
+            <input type="text" id="edit_name" name="name" class="form-control">
+            <span class="text-danger small name_error"></span>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Email</label>
+            <input type="email" id="edit_email" name="email" class="form-control">
+            <span class="text-danger small email_error"></span>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Phone</label>
+            <input type="text" id="edit_phone" name="phone" class="form-control">
+            <span class="text-danger small phone_error"></span>
+          </div>
+
+          <button type="submit" class="btn btn-warning w-100 mt-3">Update Teacher</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="toast" class="toast align-items-center text-bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/teacher.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Classes{% endblock %}
+
+{% block content %}
+    <h1>Classes</h1>
+    <a href="{% url 'class-add' %}" class="btn btn-primary mb-3">
+        Add Classes
+    </a>
+    <div class="card shadow-sm p-4">
+        <div class="table-responsive" style="max-height: 800px; overflow-y: auto;" id="tableContainerRight">
+        <table class="table table-bordered table-striped table-hover table-sm custom-border full-width-table" id="staffTableRight">
+            <thead class="table-dark" style="position: sticky; top: 0; z-index: 2;">
+            <tr>
+                <th>#</th>
+                <th>Id</th>
+                <th>Class Name</th>
+                <th>Subject</th>
+                <th>Teacher</th>
+                <th>Action</th>
+
+            </tr>
+            </thead>
+            <tbody id="classTableBody">    
+                
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/save_csrftoken.js' %}"></script>
+<script src="{% static 'js/class_load.js' %}"></script>
+
+
+{% endblock %}

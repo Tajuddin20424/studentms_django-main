@@ -1,0 +1,103 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Designations{%
+endblock %} {% block content %}
+
+<h1>Designations</h1>
+
+<a href="{% url 'designation-add' %}" class="btn btn-primary mb-3">
+  Add Designation
+</a>
+
+<div class="col-md-12">
+  <div class="card shadow-sm p-4">
+    <div class="table-responsive" style="max-height: 800px; overflow-y: auto">
+      <table
+        class="table table-bordered table-striped table-hover table-sm"
+        id="designationTable"
+      >
+        <thead class="table-dark" style="position: sticky; top: 0">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for d in designations %}
+          <tr
+            id="row{{ d.id }}"
+            data-id="{{ d.id }}"
+            data-name="{{ d.name }}"
+            data-department="{{ d.department_id }}"
+            data-status="{{ d.status }}"
+          >
+            <td>{{ forloop.counter }}</td>
+            <td>{{ d.id }}</td>
+            <td>{{ d.name }}</td>
+            <td>{{ d.department.name }}</td>
+            <td>
+              <!-- STATUS BADGE -->
+              {% if d.status == 1 %}
+              <span class="badge bg-success">Active</span>
+              {% else %}
+              <span class="badge bg-danger">Inactive</span>
+              {% endif %}
+
+              <br />
+              <!-- EDIT -->
+              <a
+                href="/designations/edit/{{ d.id }}/"
+                class="btn btn-sm btn-warning mt-1"
+              >
+                Edit
+              </a>
+              <!-- DELETE -->
+              <button
+                class="btn btn-sm btn-danger deleteBtn mt-1"
+                data-id="{{ d.id }}"
+              >
+                Delete
+              </button>
+            </td>
+
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/save_csrftoken.js' %}"></script>
+
+<script>
+  $(document).on("click", ".deleteBtn", function () {
+    const id = $(this).data("id");
+
+    if (!confirm("Are you sure you want to delete this designation?")) return;
+
+    $.ajax({
+      url: `/designations/delete/${id}/`,
+      type: "POST",
+      headers: { "X-CSRFToken": csrftoken },
+      success: function (res) {
+        if (res.status === "success") {
+          alert(res.message || "Deleted successfully!");
+          $("#row" + id).remove(); // remove row instantly
+        } else {
+          alert(res.message || "Error occurred");
+        }
+      },
+      error: function (xhr) {
+        console.log(xhr.responseText);
+        alert("Server error!");
+      },
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Designation{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row" style="min-height: 80vh;">
+        <!-- Left: Add Designation Form -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h2>Add New Designation</h2>
+                <form id="addForm" method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Designation Name</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Enter designation name" required>
+                        <span class="text-danger small name_error"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Department</label>
+                        <select id="department" name="department" class="form-control" required>
+                            <option value="">Select Department</option>
+                            {% for d in departments %}
+                                <option value="{{ d.id }}">{{ d.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="text-danger small department_error"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Status</label>
+                        <select id="status" name="status" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="submit" id="saveBtn" class="btn btn-primary me-2 px-4">
+                            💾 Save Designation
+                        </button>
+                        <a href="{% url 'designation_list' %}" class="btn btn-success px-4">
+                            ⬅️ Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h2>Designations List</h2>
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-bordered table-striped table-hover table-sm">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="designationTableBody">
+                            <!-- Rows loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/save_csrftoken.js' %}"></script>
+<script src="{% static 'js/designation_load.js' %}"></script>
+<script>
+$(document).ready(function() {
+    loadDesignation();
+
+    $('#addForm').submit(function(e) {
+        e.preventDefault();
+        const form = $(this);
+        $('.text-danger').text('');
+        $.ajax({
+            url: '/designation/add/',
+            method: 'POST',
+            data: form.serialize(),
+            success: function(res) {
+                if (res.status === 'success') {
+                    alert(res.message);
+                    form[0].reset();
+                    loadDesignation();
+                } else if (res.status === 'error_fields') {
+                    for (const field in res.errors) {
+                        form.find(`.${field}_error`).text(res.errors[field]);
+                    }
+                } else {
+                    alert(res.message || 'Something went wrong!');
+                }
+            },
+            error: function() {
+                alert('Server error!');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

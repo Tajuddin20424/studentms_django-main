@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Subjects{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+    <div class="row">
+      
+      <!-- Left: Add Subject Form -->
+
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h2>Edit Subject</h2>
+                <form id="addForm" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="text" id="sub_id" name="sub_id" class="form-control"
+                            value="{{ subject.id }}" readonly>              
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Subject Name</label>
+                        <input type="text" id="name" name="name" class="form-control" 
+                            value="{{ subject.name }}">
+                        <span class="text-danger small name_error"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        <input type="text" id="description" name="description" class="form-control"
+                            value="{{ subject.description }}">
+                        <span class="text-danger small email_error"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Teacher</label>
+                        <select id="teachers" name="teachers" class="form-control">
+                            {% for t in teachers %}
+                                <option value="{{ t.id }}" 
+                                    {% if t.id == subject.teacher_id %}selected{% endif %}>
+                                    {{ t.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="submit" id="updateSubjectBtn" class="btn btn-primary me-2 px-4">
+                            💾 Update Subject
+                        </button>
+                        <a href="{% url 'subject-list' %}" class="btn btn-success px-4">
+                            ⬅️ Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6"></div>
+
+                <div class="table-responsive" style="max-height: 800px; overflow-y: auto;" id="tableContainerRight">
+                    <table class="table table-bordered table-striped table-hover table-sm custom-border full-width-table" id="staffTableRight">
+                        <thead class="table-dark" style="position: sticky; top: 0; z-index: 2;">
+                        <tr>
+                            <th>#</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Teacher</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="subjectTableBody">
+                            <!-- Rows loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+        </div>
+
+    </div>
+</div>  
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/save_csrftoken.js' %}"></script>
+<script src="{% static 'js/subject_update.js' %}"></script>
+<script src="{% static 'js/subject_load.js' %}"></script>
+
+{% endblock %}

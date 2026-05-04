@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1 class="dashboard-title">📊 Dashboard Overview</h1>
+    <p class="dashboard-subtitle">Welcome to the Student Management System. Here's a quick summary:</p>
+
+    <div class="dashboard-cards">
+        <div class="card student-card">
+            <i class="fa-solid fa-user-graduate icon"></i>
+            <h2>{{ student_count }}</h2>
+            <p>Total Students</p>
+        </div>
+        <div class="card teacher-card">
+            <i class="fa-solid fa-chalkboard-user icon"></i>
+            <h2>{{ teacher_count }}</h2>
+            <p>Total Teachers</p>
+        </div>
+        <div class="card subject-card">
+            <i class="fa-solid fa-book-open icon"></i>
+            <h2>{{ subject_count }}</h2>
+            <p>Total Subjects</p>
+        </div>
+        <div class="card class-card">
+            <i class="fa-solid fa-graduation-cap icon"></i>
+            <h2>{{ class_count }}</h2>
+            <p>Total Classes</p>
+        </div>
+        <div class="card designation-card">
+            <i class="fa-solid fa-id-badge icon"></i>
+            <h2>{{ designation_count }}</h2>
+            <p>Total Designations</p>
+        </div>
+        <div class="card department-card">
+            <i class="fa-solid fa-building icon"></i>
+            <h2>{{ department_count }}</h2>
+            <p>Total Departments</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-container { padding: 40px; text-align: center; }
+.dashboard-title  { font-size: 2rem; font-weight: bold; margin-bottom: 10px; color: #2b2b2b; }
+.dashboard-subtitle { font-size: 1rem; color: #666; margin-bottom: 30px; }
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.card {
+    width: 100%;
+    height: 160px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: none;
+}
+.card:hover { transform: translateY(-8px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+.card h2    { font-size: 2rem; margin: 5px 0; }
+.card p     { font-size: 1rem; color: #fff; font-weight: 500; margin: 0; }
+.icon       { font-size: 2.5rem; margin-bottom: 8px; }
+
+.student-card     { background: linear-gradient(135deg, #4facfe, #00f2fe); color:#fff; }
+.teacher-card     { background: linear-gradient(135deg, #43e97b, #38f9d7); color:#fff; }
+.subject-card     { background: linear-gradient(135deg, #fa709a, #fee140); color:#fff; }
+.class-card       { background: linear-gradient(135deg, #003043, #8074e4); color:#fff; }
+.designation-card { background: linear-gradient(135deg, #ff9a9e, #fad0c4); color:#fff; }
+.department-card  { background: linear-gradient(135deg, #a18cd1, #fbc2eb); color:#fff; }
+@media (max-width: 768px) {
+    .dashboard-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+    .dashboard-cards { grid-template-columns: 1fr; }
+}
+
+</style>
+{% endblock %}

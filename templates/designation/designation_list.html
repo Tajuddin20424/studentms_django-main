@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Designations{% endblock %}
+
+{% block content %}
+    <h1>Designations</h1>
+    <a href="{% url 'add_designation' %}" class="btn btn-primary mb-3">
+        Add Designation
+    </a>
+    <div class="card shadow-sm p-4">
+        <div class="table-responsive" style="max-height: 800px; overflow-y: auto;" id="tableContainerRight">
+        <table class="table table-bordered table-striped table-hover table-sm custom-border full-width-table" id="staffTableRight">
+            <thead class="table-dark" style="position: sticky; top: 0; z-index: 2;">
+            <tr>
+                <th>#</th>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody id="designationTableBody">    
+                
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/save_csrftoken.js' %}"></script>
+<script src="{% static 'js/designation_load.js' %}"></script>
+
+{% endblock %}

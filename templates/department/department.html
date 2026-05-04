@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Departments{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <button
+    class="btn btn-primary mb-3"
+    data-bs-toggle="modal"
+    data-bs-target="#addModal"
+  >
+    + Add Department
+  </button>
+
+  <h2 class="text-center mb-4">Departments Table</h2>
+
+  <table class="table table-bordered text-center">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Status / Actions</th>
+        <th>Created At</th>
+        <th>Created By</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="departmentTable">
+      <!-- Data will come from AJAX -->
+    </tbody>
+  </table>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content p-4">
+      <h4 class="text-center mb-3">Add Department</h4>
+
+      <form id="addForm">
+        {% csrf_token %}
+
+        <input
+          type="text"
+          name="name"
+          class="form-control mb-2"
+          placeholder="Department Name"
+        />
+        <span class="text-danger small name_error"></span>
+
+        <select name="status" class="form-control mb-2">
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </select>
+        <span class="text-danger small status_error"></span>
+
+        <button type="submit" class="btn btn-primary w-100 mt-2">
+          Save
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<!-- <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content p-4">
+      <h4 class="text-center mb-3">Edit Department</h4>
+
+      <form id="editForm">
+        {% csrf_token %}
+
+        <input type="hidden" id="edit_id" name="id" />
+
+        <input
+          type="text"
+          id="edit_name"
+          name="name"
+          class="form-control mb-2"
+          placeholder="Department Name"
+        />
+        <span class="text-danger small name_error"></span>
+
+        <select id="edit_status" name="status" class="form-control mb-2">
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </select>
+        <span class="text-danger small status_error"></span>
+
+        <button type="submit" class="btn btn-warning w-100 mt-2">
+          Save
+        </button>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+<!-- TOAST -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+  <div id="toast" class="toast text-bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">Success</div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/department.js' %}"></script>
+{% endblock %}

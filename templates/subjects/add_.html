@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add subjects{% endblock %}
+
+{% block content %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Add New subject</h2>
+    <form id="addForm" method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold">subject Name</label>
+        <input type="text" name="name" class="form-control" placeholder="Enter subject name" required>
+        <span class="text-danger small name_error"></span>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Description</label>
+        <input type="text" name="Description" class="form-control" placeholder="Enter Description" required>
+        <span class="text-danger small email_error"></span>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Teacher</label>
+        <!-- <select id="eventSelect" name="event" class="form-control" onchange="this.form.submit()"> -->
+        <select id="teachers" name="teachers" class="form-control">
+            <!-- {% for t in teacher %}
+                <option value="{{ t.id }}">{{ t.name }}</option>
+            {% endfor %} -->
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary w-100 mt-2">Save Subject</button>
+        <button type="submit" id="searchBtn" class="btn btn-primary w-100 mt-2">Process</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/teacher_load.js' %}"></script>
+{% endblock %}

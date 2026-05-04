@@ -1,0 +1,7 @@
+<h1>Delete Designation</h1>
+<p>Are you sure you want to delete this designation?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+    <a href="{% url 'designation_list' %}">Cancel</a>
+</form>

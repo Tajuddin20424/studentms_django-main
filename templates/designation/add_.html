@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Designation{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+  <h2>Add New Designation</h2>
+
+  <form id="addForm" method="POST">
+    {% csrf_token %}
+
+    <!-- DESIGNATION NAME -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Designation Name</label>
+      <input type="text" name="name" class="form-control" placeholder="Enter designation name" required>
+      <span class="text-danger small name_error"></span>
+    </div>
+
+    <!-- DEPARTMENT DROPDOWN -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Department</label>
+      <select id="department" name="department" class="form-control">
+        <!-- AJAX will load -->
+      </select>
+      <span class="text-danger small department_error"></span>
+    </div>
+
+    <!-- STATUS -->
+    <div class="mb-3">
+      <label class="form-label fw-semibold">Status</label>
+      <select name="status" class="form-control">
+        <option value="1">Active</option>
+        <option value="0">Inactive</option>
+      </select>
+      <span class="text-danger small status_error"></span>
+    </div>
+
+    <!-- BUTTON -->
+    <div>
+      <button type="submit" class="btn btn-primary w-100 mt-2">Save Designation</button>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/department_load.js' %}"></script>
+<script src="{% static 'js/designation.js' %}"></script>
+{% endblock %}
