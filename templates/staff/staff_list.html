@@ -35,19 +35,18 @@
 <!-- ADD/EDIT STAFF MODAL -->
 <div class="modal fade" id="addStaffModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content p-4">
-      <!-- The title will be changed dynamically using JavaScript (Add or Edit) -->
-      <h4 class="text-center mb-3" id="modalTitle">Add Staff Member</h4>
+    <div class="modal-content p-4 shadow">
+      <h4 class="text-center mb-4" id="modalTitle">Add Staff Member</h4>
 
       <form id="addStaffForm">
         {% csrf_token %}
         
-        <!-- This hidden input is required to retain the ID during editing. -->
         <input type="hidden" id="staff_id" name="id">
 
         <input
           type="text"
           name="name"
+          id="staff_name"
           class="form-control mb-2"
           placeholder="Full Name"
           required
@@ -55,22 +54,26 @@
         <input
           type="date"
           name="dob"
+          id="staff_dob"
           class="form-control mb-2"
           placeholder="Date of Birth"
         />
         <input
           type="text"
           name="mobile"
+          id="staff_mobile"
           class="form-control mb-2"
           placeholder="Mobile Number"
         />
         <input
           type="email"
           name="email"
+          id="staff_email"
           class="form-control mb-2"
           placeholder="Email Address"
         />
 
+        <!-- Designation Section -->
         <div class="mb-3">
           <label for="designation_combo" class="form-label">Select Designation:</label>
           <div class="d-flex">
@@ -80,8 +83,7 @@
               class="form-select me-2"
               required
             >
-              <option value="">Choose...</option>
-              <!--  (staff_designation_combo.js)  -->
+              <option value="">Choose Designation...</option>
             </select>
 
             <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addDesignationModal">
@@ -90,7 +92,29 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 mt-2" id="saveBtn">
+        <!-- NEW: Select Class Section (Updated as per Screenshot 2026-05-05 224215.png) -->
+        <div class="mb-3">
+          <label for="class_combo" class="form-label">Select Class:</label>
+          <div class="d-flex">
+            <select id="class_combo" class="form-select me-2">
+              <option value="">Choose Class...</option>
+            </select>
+            <!-- + বাটনে ক্লিক করলে Class Modal ওপেন হবে -->
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addClassModal">
+              +
+            </button>
+          </div>
+        </div>
+
+        <!-- Assigned Classes List - নীল মার্ক করা জায়গার জন্য -->
+        <div id="class_selection_section" class="mb-3" style="display: none;">
+          <label class="form-label fw-bold">Assigned Classes List:</label>
+          <div id="classes_checkbox_list" class="border p-2 rounded bg-light" style="max-height: 150px; overflow-y: auto;">
+              <!-- AJAX will inject checkboxes here -->
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-2 py-2" id="saveBtn">
           Save Staff
         </button>
       </form>
@@ -121,6 +145,31 @@
     </div>
   </div>
 </div>
+
+<!-- QUICK ADD CLASS MODAL (As per Screenshot 2026-05-05 224353.png) -->
+<div class="modal fade" id="addClassModal" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content p-3 shadow-lg">
+      <h5 class="text-center mb-3">New Class</h5>
+      <form id="quickAddClassForm">
+        {% csrf_token %}
+        <input
+          type="text"
+          id="new_class_name"
+          name="class_name" 
+          class="form-control mb-3"
+          placeholder="Class Name"
+          required
+        />
+        <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success btn-sm">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 {% endblock %} 
 
 {% block extra_js %}
@@ -128,12 +177,28 @@
 <script src="{% static 'js/staff_designation_combo.js' %}"></script>
 
 <script>
-    // যখন 'Add Staff' বাটনে ক্লিক করা হবে, তখন ফর্মটি রিসেট করতে হবে
+    // ১. যখন 'Add Staff' বাটনে ক্লিক করা হবে, তখন ফর্ম এবং ক্লাস সেকশন রিসেট করতে হবে
     document.getElementById('addNewStaffBtn').addEventListener('click', function() {
         document.getElementById('addStaffForm').reset();
         document.getElementById('staff_id').value = '';
         document.getElementById('modalTitle').innerText = 'Add Staff Member';
         document.getElementById('saveBtn').innerText = 'Save Staff';
+        
+        document.getElementById('class_selection_section').style.display = 'none';
+        document.getElementById('classes_checkbox_list').innerHTML = '';
+    });
+
+    // ২. Class ড্রপডাউনে ডাটা দেখানোর জন্য (এটি পেজ লোড হলেই কল হবে আপনার staff.js থেকে)
+    // এবং ড্রপডাউন থেকে সিলেক্ট করলে লিস্ট পপুলেট হবে
+    document.getElementById('class_combo').addEventListener('change', function() {
+        const classSection = document.getElementById('class_selection_section');
+        if (this.value !== "") {
+            classSection.style.display = 'block'; 
+            // যদি staff.js এ loadAllClasses() ফাংশন থাকে তবে সেটি এখানে কল হবে
+            if(typeof loadAllClasses === "function") {
+                loadAllClasses();
+            }
+        }
     });
 </script>
 {% endblock %}
