@@ -70,7 +70,6 @@
                     <div class="d-flex">
                         <select name="designation" id="designation_combo" class="form-select me-2" required>
                             <option value="">Choose Designation...</option>
-                            <!-- AJAX will inject options here via staff_designation_combo.js -->
                         </select>
                         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addDesignationModal">
                             +
@@ -78,13 +77,12 @@
                     </div>
                 </div>
 
-                <!-- Class Selection Section -->
+                <!-- Teacher Selection Section (UPDATED AS PER SCREENSHOT) -->
                 <div class="mb-3">
-                    <label for="class_combo" class="form-label fw-bold">Select Class:</label>
+                    <label for="class_combo" class="form-label fw-bold">Select Teacher:</label>
                     <div class="d-flex">
                         <select id="class_combo" class="form-select me-2">
-                            <option value="">Choose Class...</option>
-                            <!-- AJAX will inject options here via staff.js -->
+                            <option value="">Choose Teacher...</option>
                         </select>
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addClassModal">
                             +
@@ -92,11 +90,11 @@
                     </div>
                 </div>
 
-                <!-- Assigned Classes List (Checkbox section) -->
+                <!-- Assigned Teachers List (Checkbox section) -->
                 <div id="class_selection_section" class="mb-3" style="display: none;">
-                    <label class="form-label fw-bold text-primary">Select Assigned Classes:</label>
+                    <label class="form-label fw-bold text-primary">Select Assigned Teachers:</label>
                     <div id="classes_checkbox_list" class="border p-2 rounded bg-light" style="max-height: 150px; overflow-y: auto;">
-                        <!-- AJAX checkboxes from loadAllClasses() -->
+                        <!-- AJAX checkboxes will load here -->
                     </div>
                 </div>
 
@@ -108,9 +106,24 @@
     </div>
 </div>
 
-<!-- ==========================================
-     QUICK ADD DESIGNATION MODAL 
-     ========================================== -->
+<!-- Quick Add Modal (Teacher/Class context) -->
+<div class="modal fade" id="addClassModal" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content p-3 shadow-lg border-primary">
+            <h5 class="text-center mb-3">New Teacher/Class</h5>
+            <form id="quickAddClassForm">
+                {% csrf_token %}
+                <input type="text" id="new_class_name" name="class_name" class="form-control mb-3" placeholder="Name" required />
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Designation Modal (Thik thak rakha hoyeche) -->
 <div class="modal fade" id="addDesignationModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content p-3 shadow-lg border-success">
@@ -127,34 +140,14 @@
     </div>
 </div>
 
-<!-- ==========================================
-     QUICK ADD CLASS MODAL 
-     ========================================== -->
-<div class="modal fade" id="addClassModal" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content p-3 shadow-lg border-primary">
-            <h5 class="text-center mb-3">New Class</h5>
-            <form id="quickAddClassForm">
-                {% csrf_token %}
-                <input type="text" id="new_class_name" name="class_name" class="form-control mb-3" placeholder="e.g. Class 10" required />
-                <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success btn-sm">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 {% endblock %} 
 
 {% block extra_js %}
-<!-- static paths must match your settings.py -->
 <script src="{% static 'js/staff.js' %}"></script>
 <script src="{% static 'js/staff_designation_combo.js' %}"></script>
 
 <script>
-    // 1. When clicking the "Add Staff" button, the form resets.
+    // 1. Reset Form on Add
     document.getElementById('addNewStaffBtn').addEventListener('click', function() {
         document.getElementById('addStaffForm').reset();
         document.getElementById('staff_id').value = '';
@@ -164,21 +157,20 @@
         document.getElementById('class_selection_section').style.display = 'none';
         document.getElementById('classes_checkbox_list').innerHTML = '';
 
-        // Dropdown data refresh
-        if(typeof loadClassCombo === "function") { loadClassCombo(); }
+        if(typeof loadTeacherCombo === "function") { loadTeacherCombo(); }
         if(typeof loadDesignationCombo === "function") { loadDesignationCombo(); }
     });
 
-    // 2. When the Class dropdown changes, show the checkbox list
+    // 2. Change event for Teacher Dropdown
     document.getElementById('class_combo').addEventListener('change', function() {
-        const classSection = document.getElementById('class_selection_section');
+        const section = document.getElementById('class_selection_section');
         if (this.value !== "") {
-            classSection.style.display = 'block'; 
-            if(typeof loadAllClasses === "function") {
-                loadAllClasses();
+            section.style.display = 'block'; 
+            if(typeof loadAllTeachers === "function") {
+                loadAllTeachers();
             }
         } else {
-            classSection.style.display = 'none';
+            section.style.display = 'none';
         }
     });
 </script>
