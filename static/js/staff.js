@@ -1,4 +1,4 @@
-// ১. স্টাফ লিস্ট লোড করার ফাংশন
+// 1. Function to load the staff list table.
 function loadStaffList() {
     $.ajax({
         url: "/staff/get-data/",
@@ -25,36 +25,36 @@ function loadStaffList() {
             $("#staffTableBody").html(tbody);
         },
         error: function () {
-            console.log("Error loading staff list.");
+            console.error("Error loading staff list.");
         },
     });
 }
 
-// ২. ড্রপডাউনে ক্লাসের ডেটা লোড করার ফাংশন
+// 2. Function to load class data in the dropdown (URL FIX: /staff/ added)
 function loadClassCombo() {
     $.ajax({
-        url: "/get-all-classes/",
+        url: "/staff/get-all-classes/", // Terminal 404 error fix
         method: "GET",
         success: function (response) {
             let options = '<option value="">Choose Class...</option>';
-            if (response.classes) {
+            if (response.classes && response.classes.length > 0) {
                 $.each(response.classes, function (i, cls) {
-                    options += `<option value="${cls.id}">${cls.class_name}</option>`;
+                    let teacherInfo = cls.teacher_name ? ` - ${cls.teacher_name}` : "";
+                    options += `<option value="${cls.id}">${cls.class_name}${teacherInfo}</option>`;
                 });
             }
             $("#class_combo").html(options); 
-            console.log("Class dropdown loaded.");
         },
-        error: function() {
-            console.log("Error loading class dropdown.");
+        error: function(xhr) {
+            console.error("AJAX Error (Class Combo):", xhr.responseText);
         }
     });
 }
 
-// ৩. চেকবক্স লিস্টে সব ক্লাস লোড করার ফাংশন (স্টাফ মোডালের জন্য)
+// 3. Function to load classes in the checkbox list (URL FIX: /staff/ added)
 function loadAllClasses(selectedClasses = []) {
     $.ajax({
-        url: "/get-all-classes/",
+        url: "/staff/get-all-classes/", // URL Fix
         method: "GET",
         success: function(response) {
             let classesListDiv = $("#classes_checkbox_list");
@@ -62,76 +62,62 @@ function loadAllClasses(selectedClasses = []) {
             
             if (response.classes && response.classes.length > 0) {
                 $.each(response.classes, function(i, cls) {
-                    // এডিট মোড হলে আগের সেভ করা ক্লাসগুলো টিক (checked) থাকবে
                     let isChecked = selectedClasses.map(String).includes(String(cls.id)) ? "checked" : "";
+                    let teacherInfo = cls.teacher_name ? ` (${cls.teacher_name})` : "";
                     
                     html += `
-                        <div class="form-check">
+                        <div class="form-check col-md-6">
                             <input class="form-check-input" type="checkbox" name="assigned_classes" value="${cls.id}" id="class_${cls.id}" ${isChecked}>
                             <label class="form-check-label" for="class_${cls.id}">
-                                ${cls.class_name}
+                                ${cls.class_name}${teacherInfo}
                             </label>
                         </div>`;
                 });
-                classesListDiv.html(html);
+                classesListDiv.html(`<div class="row">${html}</div>`);
                 $("#class_selection_section").show();
             } else {
                 classesListDiv.html("<p class='text-muted'>No classes found.</p>");
             }
         },
         error: function() {
-            console.log("Error loading classes checkboxes.");
+            console.error("Error loading classes checkboxes.");
         }
     });
 }
 
 $(document).ready(function () {
-    // পেজ লোড হওয়ার সময় প্রয়োজনীয় ডাটা নিয়ে আসা
+    // 1. Initial data load
     loadStaffList();
     loadClassCombo();
 
-    // --- Select Class ড্রপডাউন পরিবর্তন হলে চেকবক্স লিস্ট আপডেট হবে ---
+    // 2. Update checkbox list when class dropdown changes
     $(document).on("change", "#class_combo", function() {
         if($(this).val() !== "") {
             loadAllClasses();
+        } else {
+            $("#class_selection_section").hide();
         }
     });
 
-    // --- নতুন ক্লাস সেভ করার লজিক (Quick Add Class Modal) ---
+    // 3. Quick Add Class
     $(document).on("submit", "#quickAddClassForm", function (e) {
         e.preventDefault();
-        let className = $("#new_class_name").val();
-        let csrfToken = $("input[name=csrfmiddlewaretoken]").val();
-
-        if (!className) {
-            alert("Please enter a class name");
-            return;
-        }
-
         $.ajax({
-            url: "/staff/add-class/", 
+            url: "/staff/add-class-data/", // URL Sync
             method: "POST",
-            data: {
-                class_name: className,
-                csrfmiddlewaretoken: csrfToken,
-            },
+            data: $(this).serialize(),
             success: function (response) {
                 alert("✅ New Class Added!");
                 $("#addClassModal").modal("hide");
                 $("#quickAddClassForm")[0].reset();
-                loadClassCombo(); // মেইন ড্রপডাউন রিফ্রেশ
-                loadAllClasses(); // চেকবক্স লিস্ট রিফ্রেশ
-            },
-            error: function (xhr) {
-                alert("❌ Error saving class: " + xhr.statusText);
+                loadClassCombo(); 
             }
         });
     });
 
-    // ৪. স্টাফ অ্যাড এবং আপডেট করার লজিক
+    // 4. Add and Update Staff
     $("#addStaffForm").on("submit", function (e) {
         e.preventDefault();
-
         let staffId = $("#staff_id").val();
         let targetUrl = staffId ? "/staff/update-data/" : "/staff/add-data/";
 
@@ -146,29 +132,23 @@ $(document).ready(function () {
                     $("#addStaffForm")[0].reset();
                     $("#staff_id").val(""); 
                     $("#class_selection_section").hide(); 
-                    $("#addStaffModal h4").text("Add New Staff"); 
                     loadStaffList();
                 } else {
                     alert("❌ " + response.message);
                 }
-            },
-            error: function () {
-                alert("❌ Error saving staff member.");
-            },
+            }
         });
     });
 
-    // ৫. স্টাফ এডিট করার লজিক
+    // 5. Edit Staff
     $(document).on("click", ".editStaffBtn", function () {
         let id = $(this).data("id");
-
         $.ajax({
             url: "/staff/get-single/",
             method: "GET",
             data: { id: id },
             success: function (response) {
                 let s = response.staff;
-                
                 $("#addStaffModal h4").text("Edit Staff Member");
                 $("input[name='name']").val(s.name);
                 $("input[name='dob']").val(s.dob);
@@ -176,7 +156,6 @@ $(document).ready(function () {
                 $("input[name='email']").val(s.email);
                 $("#designation_combo").val(s.designation_id);
                 
-                // স্টাফ আইডি সেট করা (আপডেটের জন্য)
                 if($("#staff_id").length == 0) {
                     $("#addStaffForm").append(`<input type="hidden" id="staff_id" name="id" value="${s.id}">`);
                 } else {
@@ -185,65 +164,43 @@ $(document).ready(function () {
 
                 let assignedClasses = s.assigned_classes || [];
                 loadAllClasses(assignedClasses);
-
                 $("#addStaffModal").modal("show");
             }
         });
     });
 
-    // ৬. স্টাফ ডিলিট করার লজিক
+    // 6. Delete Staff
     $(document).on("click", ".deleteStaffBtn", function () {
         let id = $(this).data("id");
         let csrfToken = $("input[name=csrfmiddlewaretoken]").val();
-
-        if (confirm("Are you sure you want to delete this staff member?")) {
+        if (confirm("Are you sure?")) {
             $.ajax({
                 url: "/staff/delete-data/",
                 method: "POST",
-                data: {
-                    id: id,
-                    csrfmiddlewaretoken: csrfToken,
-                },
+                data: { id: id, csrfmiddlewaretoken: csrfToken },
                 success: function (response) {
                     alert("🗑️ " + response.message);
                     loadStaffList();
-                },
-                error: function () {
-                    alert("❌ Error deleting staff member");
-                },
+                }
             });
         }
     });
 
-    // ৭. নতুন পদবী (Designation) সেভ করার লজিক
+    // 7. Quick Add Designation
     $(document).on("submit", "#quickAddDesignationForm", function (e) {
         e.preventDefault();
-        let name = $("#new_designation_name").val();
-        let csrfToken = $("input[name=csrfmiddlewaretoken]").val();
-
         $.ajax({
             url: "/staff/add-designation/", 
             method: "POST",
-            data: {
-                name: name,
-                status: 1,
-                csrfmiddlewaretoken: csrfToken,
-            },
+            data: $(this).serialize(),
             success: function (response) {
                 alert("✅ New Designation Added!");
                 $("#addDesignationModal").modal("hide");
                 $("#quickAddDesignationForm")[0].reset();
-                // যদি loadDesignationCombo অন্য কোথাও ডিফাইন করা থাকে
                 if (typeof loadDesignationCombo === "function") {
                     loadDesignationCombo();
-                } else {
-                    // অল্টারনেটিভ: সরাসরি রিলোড বা ফিল্ড আপডেট
-                    console.log("Designation combo refreshed.");
                 }
-            },
-            error: function () {
-                alert("❌ Error saving designation");
-            },
+            }
         });
     });
 });
