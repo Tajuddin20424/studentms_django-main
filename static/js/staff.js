@@ -2,7 +2,7 @@
  * Staff Management JS - Updated with Correct IDs
  */
 
-// ১. স্টাফ লিস্ট টেবিল লোড করার ফাংশন
+// 1. Function to load the staff list table.
 function loadStaffList() {
     $.ajax({
         url: "/staff/get-data/",
@@ -31,7 +31,7 @@ function loadStaffList() {
     });
 }
 
-// ২. টিচার ড্রপডাউন লোড
+// 2. Function to load the teacher dropdown
 function loadTeacherCombo() {
     $.ajax({
         url: "/staff/get-all-classes/", 
@@ -49,7 +49,7 @@ function loadTeacherCombo() {
     });
 }
 
-// ৩. চেকবক্স লিস্ট লোড
+// 3. Function to load the checkbox list
 function loadAllTeachers(selectedItems = []) {
     $.ajax({
         url: "/staff/get-all-classes/",
@@ -81,11 +81,11 @@ $(document).ready(function () {
     loadStaffList();
     loadTeacherCombo();
 
-    // --- ৪. নতুন ডেজিগনেশন অ্যাড করার ফাংশন (আপনার HTML আইডি অনুযায়ী ফিক্সড) ---
+    // --- 4. Function to add a new designation (Fixed with correct HTML IDs) ---
     $("#quickAddDesignationForm").on("submit", function (e) {
         e.preventDefault();
         
-        let designationName = $("#new_designation_name").val(); // HTML আইডি: new_designation_name
+        let designationName = $("#new_designation_name").val(); // HTML ID: new_designation_name
 
         if (!designationName) {
             alert("Please enter a designation name!");
@@ -101,11 +101,11 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.status === "success") {
-                    // ড্রপডাউনে নতুন পদবিটি যোগ করা
+                    // Add the new designation to the dropdown menu.
                     let newOption = `<option value="${response.id}" selected>${response.name}</option>`;
                     $("#designation_combo").append(newOption); 
 
-                    // মডাল বন্ধ করা (HTML আইডি: addDesignationModal)
+                    // Close the modal (HTML ID: addDesignationModal).
                     $("#addDesignationModal").modal("hide"); 
                     $("#quickAddDesignationForm")[0].reset();
                     
