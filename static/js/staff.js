@@ -1,7 +1,3 @@
-/**
- * Staff Management JS - Updated with Correct IDs
- */
-
 // 1. Function to load the staff list table.
 function loadStaffList() {
     $.ajax({

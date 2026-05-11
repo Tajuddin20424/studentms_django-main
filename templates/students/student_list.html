@@ -156,7 +156,7 @@
 
 <script>
 $(document).ready(function () {
-    // Designation Add করার জন্য সরাসরি হ্যান্ডলার
+    // Designation Add Direct handler for execution.
     $("#quickAddDesignationForm").off("submit").on("submit", function (e) {
         e.preventDefault();
         
@@ -164,7 +164,7 @@ $(document).ready(function () {
         const csrfToken = $("input[name=csrfmiddlewaretoken]").val();
 
         if (!designationName) {
-            alert("নাম লিখুন!");
+            alert("name is required!");
             return;
         }
 
@@ -177,22 +177,22 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.status === "success") {
-                    // ১. ড্রপডাউন আপডেট (ID: designation_combo)
+                    // 1. Dropdown update. (ID: designation_combo)
                     const newOption = `<option value="${response.id}" selected>${response.name}</option>`;
                     $("#designation_combo").append(newOption); 
 
-                    // ২. মডাল বন্ধ করা (ID: addDesignationModal)
+                    // 2. Modal close. (ID: addDesignationModal)
                     $("#addDesignationModal").modal("hide"); 
                     $("#quickAddDesignationForm")[0].reset();
                     
-                    alert("✅ Success: " + response.name + " অ্যাড হয়েছে!");
+                    alert("✅ Success: " + response.name + " Successfully added.!");
                 } else {
                     alert("❌ Error: " + response.message);
                 }
             },
             error: function (xhr) {
                 console.error(xhr.responseText);
-                alert("সার্ভার এরর! কনসোল চেক করুন।");
+                alert("Server error! Please check the console.");
             }
         });
     });
