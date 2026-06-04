@@ -26,6 +26,13 @@
       .navbar-nav .nav-link {
         padding: 0.25rem 0.75rem;
         font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+    /* ── Active Link Custom CSS ──────────────── */
+      .navbar-nav .nav-link.active {
+        color: #ffffff !important; /* Text color will be pure white */
+        font-weight: bold;
+        border-bottom: 2px solid #fff; /* Underline will be professional */
       }
     </style>
   </head>
@@ -50,37 +57,31 @@
         >
           <ul class="navbar-nav flex-wrap">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'home' %}">Home</a>
+              <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'student_list' %}">Students</a>
+              <a class="nav-link {% if '/students/' in request.path %}active{% endif %}" href="{% url 'student_list' %}">Students</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'teacher-list' %}">Teachers</a>
+              <a class="nav-link {% if '/teachers/' in request.path %}active{% endif %}" href="{% url 'teacher-list' %}">Teachers</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'subject-list' %}">Subjects</a>
+              <a class="nav-link {% if '/subjects/' in request.path %}active{% endif %}" href="{% url 'subject-list' %}">Subjects</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'class-list' %}">Classes</a>
+              <a class="nav-link {% if '/classes/' in request.path %}active{% endif %}" href="{% url 'class-list' %}">Classes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'designation_list' %}"
-                >Designation</a
-              >
+              <a class="nav-link {% if '/designation/' in request.path %}active{% endif %}" href="{% url 'designation_list' %}">Designation</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'department_list' %}"
-                >Department</a
-              >
+              <a class="nav-link {% if '/department/' in request.path and 'department_list2' not in request.resolver_match.url_name %}active{% endif %}" href="{% url 'department_list' %}">Department</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'department_list2' %}"
-                >Department 2</a
-              >
+              <a class="nav-link {% if 'department_list2' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'department_list2' %}">Department 2</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'staff_list_view' %}">Staff</a>
+              <a class="nav-link {% if '/staff/' in request.path %}active{% endif %}" href="{% url 'staff_list_view' %}">Staff</a>
             </li>
           </ul>
         </div>
