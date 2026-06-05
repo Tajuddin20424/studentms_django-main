@@ -7,6 +7,7 @@ from subjects.models import Subject
 from classes.models import ClassModel
 from designation.models import Designation
 from department.models import Department
+from django.utils import timezone
 import re
 
 def home(request):
@@ -56,6 +57,7 @@ def add_student(request):
 
         Student.objects.create(
             name=name, email=email, phone=phone, address=address, status=status
+            , created_at=timezone.now(), updated_at=timezone.now()
         )
         return JsonResponse({'status': 'success', 'message': 'Student added successfully!'})
 
@@ -95,6 +97,7 @@ def update_student(request, id):
         student.phone = phone
         student.address = address
         student.status = status
+        student.updated_at = timezone.now()
         student.save()
 
         return JsonResponse({'status': 'success', 'message': 'Student updated successfully!'})
