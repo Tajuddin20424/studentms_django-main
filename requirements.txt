@@ -16,7 +16,7 @@ mysqlclient==2.2.8
 openai==2.36.0
 Pillow==12.2.0
 platformdirs==4.9.4
-psycopg2-binary==2.9.7
+psycopg[binary]
 PyMySQL==1.1.2
 python-discovery==1.2.1
 reportlab==4.5.0
